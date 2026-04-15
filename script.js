@@ -4,6 +4,8 @@ const productsContainer = document.getElementById("productsContainer");
 const chatForm = document.getElementById("chatForm");
 const chatWindow = document.getElementById("chatWindow");
 
+let allProducts = [];
+
 /* Show initial placeholder until user selects a category */
 productsContainer.innerHTML = `
   <div class="placeholder-message">
@@ -23,7 +25,7 @@ function displayProducts(products) {
   productsContainer.innerHTML = products
     .map(
       (product) => `
-    <div class="product-card">
+    <div class="product-card" onclick="toggleProduct('${product.id}')">
       <img src="${product.image}" alt="${product.name}">
       <div class="product-info">
         <h3>${product.name}</h3>
@@ -35,14 +37,23 @@ function displayProducts(products) {
     .join("");
 }
 
+function toggleProduct(id){
+  const product = allProducts.find(p => p.id === id);
+  if (selectedProduct.has(id)){
+    selectedProduct.delete(id);
+  } else {
+    selectedProduct.add(id);
+  }
+}
+
 /* Filter and display products when category changes */
 categoryFilter.addEventListener("change", async (e) => {
-  const products = await loadProducts();
   const selectedCategory = e.target.value;
+  allProducts = await loadProducts();
 
   /* filter() creates a new array containing only products 
      where the category matches what the user selected */
-  const filteredProducts = products.filter(
+  const filteredProducts = allProducts.filter(
     (product) => product.category === selectedCategory
   );
 
