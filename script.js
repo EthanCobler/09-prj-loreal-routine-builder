@@ -4,6 +4,7 @@ const productsContainer = document.getElementById("productsContainer");
 const chatForm = document.getElementById("chatForm");
 const chatWindow = document.getElementById("chatWindow");
 
+const selectedProducts = new Set();
 let allProducts = [];
 
 /* Show initial placeholder until user selects a category */
@@ -39,10 +40,12 @@ function displayProducts(products) {
 
 function toggleProduct(id){
   const product = allProducts.find(p => p.id === id);
-  if (selectedProduct.has(id)){
-    selectedProduct.delete(id);
-  } else {
-    selectedProduct.add(id);
+  if (product){
+    if (selectedProducts.has(id)){
+      selectedProducts.delete(id);
+    } else {
+      selectedProducts.add(id);
+    }
   }
 }
 
