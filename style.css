@@ -40,6 +40,8 @@ body {
 .search-section {
   margin: 30px 0;
   display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .search-section select {
@@ -52,12 +54,6 @@ body {
   background-color: white;
   font-weight: 500;
 }
-
-.search-section select:focus {
-  outline: none;
-  border-color: #666;
-}
-
 /* chat section */
 .chatbox {
   margin: 40px 0;
@@ -281,4 +277,38 @@ body {
 
 .product-card:hover .product-description {
   display: block;
+}
+
+#productSearch {
+  width: 100%;
+  padding: 16px;
+  font-size: 18px;
+  border: 2px solid #000;
+  border-radius: 8px;
+  margin-top: 12px;
+  font-family: "Montserrat", Arial, sans-serif;
+}
+
+#productSearch:focus {
+  outline: none;
+  border-color: #666;
+}
+
+[dir="rtl"] .chat-form {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .product-card {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+[dir="rtl"] .selected-products,
+[dir="rtl"] .chatbox,
+[dir="rtl"] .search-section {
+  text-align: right;
+}
+
+[dir="rtl"] #selectedProductsList {
+  flex-direction: row-reverse;
 }

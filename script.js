@@ -5,7 +5,7 @@ const productsContainer = document.getElementById("productsContainer");
 const chatForm = document.getElementById("chatForm");
 const chatWindow = document.getElementById("chatWindow");
 const userInput = document.getElementById("userInput");
-const sendBtn = document.getElementById("sendBtn");
+const sendButton = document.getElementById("sendButton");
 const generateBtn = document.getElementById("generateRoutine");
 const selectedProductsList = document.getElementById("selectedProductsList");
 
@@ -32,17 +32,17 @@ function displayProducts(products) {
   productsContainer.innerHTML = products
     .map(
       (product) => `
-    <div class="product-card ${selectedProducts.has(product.id) ? 'selected' : ''}" 
+    <div class="product-card ${selectedProducts.has(product.id) ? "selected" : ""}" 
          id="card-${product.id}" 
          onclick="toggleProduct('${product.id}')">
       <img src="${product.image}" alt="${product.name}">
       <div class="product-info">
         <h3>${product.name}</h3>
         <p>${product.brand}</p>
-        <p class="product-description">${product.description || ''}</p>
+        <p class="product-description">${product.description || ""}</p>
       </div>
     </div>
-  `
+  `,
     )
     .join("");
 }
@@ -60,13 +60,16 @@ function updateSelectedList() {
       <span>${p.name}</span>
       <button onclick="removeProduct(${p.id})" style="background:none;border:none;cursor:pointer;color:#ff003b;font-size:16px;">✕</button>
     </div>
-  `
+  `,
     )
     .join("");
 }
 
 function saveToLocalStorage() {
-  localStorage.setItem("selectedProducts", JSON.stringify([...selectedProducts]));
+  localStorage.setItem(
+    "selectedProducts",
+    JSON.stringify([...selectedProducts]),
+  );
 }
 
 function loadFromLocalStorage() {
@@ -100,13 +103,34 @@ function removeProduct(id) {
   saveToLocalStorage();
 }
 
+const productSearch = document.getElementById("productSearch");
+
+function filterAndDisplay() {
+  const searchTerm = productSearch.value.toLowerCase();
+  const category = categoryFilter.value;
+
+  let filtered = allProducts;
+  if (category) filtered = filtered.filter((p) => p.category === category);
+  if (searchTerm)
+    filtered = filtered.filter(
+      (p) =>
+        p.name.toLowerCase().includes(searchTerm) ||
+        p.description?.toLowerCase().includes(searchTerm),
+    );
+
+  displayProducts(filtered);
+}
+
+productSearch.addEventListener("input", filterAndDisplay);
+
+function toggleRTL() {
+  const html = document.documentElement;
+  html.dir = html.dir === "rtl" ? "ltr" : "rtl";
+}
+
 categoryFilter.addEventListener("change", async (e) => {
-  const selectedCategory = e.target.value;
   allProducts = await loadProducts();
-  const filteredProducts = allProducts.filter(
-    (product) => product.category === selectedCategory
-  );
-  displayProducts(filteredProducts);
+  filterAndDisplay();
 });
 
 function appendMessage(role, content) {
@@ -115,7 +139,8 @@ function appendMessage(role, content) {
   if (role === "user") {
     div.textContent = `You: ${content}`;
   } else {
-    div.innerHTML = `<strong>L'Oréal Advisor:</strong> ` + marked.parse(content);
+    div.innerHTML =
+      `<strong>L'Oréal Advisor:</strong> ` + marked.parse(content);
   }
   chatWindow.appendChild(div);
   chatWindow.scrollTop = chatWindow.scrollHeight;
@@ -141,7 +166,8 @@ async function getAIResponse() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ messages: conversationHistory }),
   });
-  if (!response.ok) throw new Error(`Worker responded with status ${response.status}`);
+  if (!response.ok)
+    throw new Error(`Worker responded with status ${response.status}`);
   const data = await response.json();
   return data.choices[0].message.content;
 }
@@ -152,7 +178,7 @@ chatForm.addEventListener("submit", async (e) => {
   if (!userText) return;
   appendMessage("user", userText);
   userInput.value = "";
-  sendBtn.disabled = true;
+  sendButton.disabled = true;
   conversationHistory.push({ role: "user", content: userText });
   showTypingIndicator();
   try {
@@ -162,10 +188,13 @@ chatForm.addEventListener("submit", async (e) => {
     appendMessage("assistant", aiText);
   } catch (err) {
     removeTypingIndicator();
-    appendMessage("assistant", "Sorry, something went wrong. Please try again.");
+    appendMessage(
+      "assistant",
+      "Sorry, something went wrong. Please try again.",
+    );
     console.error("API Error:", err);
   } finally {
-    sendBtn.disabled = false;
+    sendButton.disabled = false;
     userInput.focus();
   }
 });
@@ -175,9 +204,13 @@ generateBtn.addEventListener("click", async () => {
     alert("Please select at least one product to generate a routine.");
     return;
   }
-  const selectedProductDetails = allProducts.filter((p) => selectedProducts.has(p.id));
+  const selectedProductDetails = allProducts.filter((p) =>
+    selectedProducts.has(p.id),
+  );
   const productSummaries = selectedProductDetails
-    .map((p) => `${p.name} by ${p.brand} (${p.category}): ${p.description || ''}`)
+    .map(
+      (p) => `${p.name} by ${p.brand} (${p.category}): ${p.description || ""}`,
+    )
     .join("\n");
   const prompt = `Please create a personalized beauty routine using these selected products:\n${productSummaries}\n\nFormat it as a step-by-step routine with brief instructions for each product.`;
   conversationHistory.push({ role: "user", content: prompt });
@@ -189,7 +222,10 @@ generateBtn.addEventListener("click", async () => {
     appendMessage("assistant", aiText);
   } catch (err) {
     removeTypingIndicator();
-    appendMessage("assistant", "Sorry, something went wrong. Please try again.");
+    appendMessage(
+      "assistant",
+      "Sorry, something went wrong. Please try again.",
+    );
     console.error("API Error:", err);
   }
 });
@@ -199,5 +235,5 @@ updateSelectedList();
 
 appendMessage(
   "assistant",
-  "Hey, I'm your L'Oréal beauty advisor! Select some products and hit Generate Routine, or ask me anything about skincare, haircare, makeup, or fragrance."
+  "Hey, I'm your L'Oréal beauty advisor! Select some products and hit Generate Routine, or ask me anything about skincare, haircare, makeup, or fragrance.",
 );

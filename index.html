@@ -22,6 +22,7 @@
       <header class="site-header">
         <img src="img/loreal-logo.png" alt="L'Oréal Logo" class="logo" />
         <h1 class="site-title">Smart Routine &amp; Product Advisor</h1>
+        <button id="rtlToggle" onclick="toggleRTL()" style="margin-top:10px;padding:8px 16px;cursor:pointer;border:2px solid #000;background:none;font-family:Montserrat,sans-serif;font-size:14px;">Toggle RTL</button>
       </header>
 
       <!-- Category Filter -->
@@ -38,6 +39,7 @@
           <option value="suncare">Suncare</option>
           <option value="fragrance">Fragrance</option>
         </select>
+        <input id="productSearch" type="text" placeholder="Search products by name or keyword…" />
       </div>
 
       <!-- Products Grid -->
